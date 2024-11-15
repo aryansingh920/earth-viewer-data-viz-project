@@ -1,12 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { TextureLoader } from 'three';
+// eslint-disable-next-line no-unused-vars
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import Stars from './Stars';
-
+import countryService from '../services/api';
+import CountryTooltip from './CountryTooltip';
 function EarthScene() {
     const earthRef = useRef();
+    // eslint-disable-next-line no-unused-vars
     const [isRotating, setIsRotating] = useState(true);
     const [hoverCountry, setHoverCountry] = useState(null);
     // eslint-disable-next-line no-unused-vars
@@ -16,14 +20,16 @@ function EarthScene() {
     // Load textures
     const earthTexture = useLoader(TextureLoader, '/textures/8k_earth_daymap.jpg');
 
+    // Fetch major countries data
     useEffect(() => {
-        // Fetch major countries data on component mount
-        fetch('http://localhost:8000/major-countries')
-            .then(response => response.json())
-            .then(data => setMajorCountries(data))
-            .catch(error => console.error('Error fetching major countries:', error));
+        const fetchMajorCountries = async () => {
+            const data = await countryService.getMajorCountries();
+            setMajorCountries(data);
+        };
+        fetchMajorCountries();
     }, []);
 
+    // Handle rotation controls
     useEffect(() => {
         const handlePointerDown = () => setIsRotating(false);
         const handlePointerUp = () => setIsRotating(true);
@@ -39,52 +45,41 @@ function EarthScene() {
         };
     }, []);
 
-    const handlePointerMove = async (event) => {
+    const handlePointerMove = async (e) => {
         if (!earthRef.current) return;
 
-        event.preventDefault();
-
         const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2(
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1
+        const pointer = new THREE.Vector2(
+            (e.clientX / window.innerWidth) * 2 - 1,
+            -(e.clientY / window.innerHeight) * 2 + 1
         );
 
-        raycaster.setFromCamera(mouse, camera);
+        raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObject(earthRef.current);
 
         if (intersects.length > 0)
         {
-            const point = intersects[0].point;
+            // Get intersection point in world coordinates
+            const point = intersects[0].point.clone();
+            // Apply Earth's current rotation to get the correct coordinates
+            const worldMatrix = earthRef.current.matrixWorld;
+            point.applyMatrix4(worldMatrix);
 
-            try
+            const countryData = await countryService.detectCountry({
+                x: point.x,
+                y: point.y,
+                z: point.z
+            });
+
+            if (countryData)
             {
-                const response = await fetch('http://localhost:8000/detect-country', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        x: point.x,
-                        y: point.y,
-                        z: point.z
-                    })
+                setHoverCountry({
+                    ...countryData,
+                    position: intersects[0].point // Use original intersection point for display
                 });
-
-                const data = await response.json();
-                if (data)
-                {
-                    setHoverCountry({
-                        ...data,
-                        position: point
-                    });
-                } else
-                {
-                    setHoverCountry(null);
-                }
-            } catch (error)
+            } else
             {
-                console.error('Error detecting country:', error);
+                setHoverCountry(null);
             }
         } else
         {
@@ -92,10 +87,22 @@ function EarthScene() {
         }
     };
 
+    // Initial setup
+    useEffect(() => {
+        if (earthRef.current)
+        {
+            // Set initial rotation to match the texture map orientation
+            earthRef.current.rotation.x = 0;
+            earthRef.current.rotation.y = -Math.PI / 2; // Rotate 90 degrees to align with map
+            earthRef.current.rotation.z = 0;
+        }
+    }, []);
+
+    // Continuous rotation
     useFrame(() => {
         if (earthRef.current && isRotating)
         {
-            earthRef.current.rotation.y += 0.001;
+            // earthRef.current.rotation.y += 0.001;
         }
     });
 
@@ -112,6 +119,7 @@ function EarthScene() {
             <mesh
                 ref={earthRef}
                 onPointerMove={handlePointerMove}
+                className="earth-mesh"
             >
                 <sphereGeometry args={[1, 64, 64]} />
                 <meshStandardMaterial
@@ -121,32 +129,37 @@ function EarthScene() {
                 />
             </mesh>
 
-            {hoverCountry && (
-                <Html
-                    position={[
-                        hoverCountry.position.x * 1.2,
-                        hoverCountry.position.y * 1.2,
-                        hoverCountry.position.z * 1.2
-                    ]}
-                    style={{
-                        pointerEvents: 'none',
-                        transform: 'translate3d(-50%, -50%, 0)'
-                    }}
-                >
-                    <div className="country-tooltip">
-                        <h3>{hoverCountry.name}</h3>
-                        {hoverCountry.is_major && <span className="major-badge">Major Country</span>}
-                        <div className="coordinates">
-                            <div>Lat: {hoverCountry.lat.toFixed(2)}°</div>
-                            <div>Lon: {hoverCountry.lon.toFixed(2)}°</div>
-                        </div>
-                    </div>
-                </Html>
-            )}
+            {hoverCountry && <CountryTooltip country={hoverCountry} />}
 
             <Stars />
         </>
     );
 }
+
+// Separate component for the tooltip
+// function CountryTooltip({ country }) {
+//     return (
+//         <Html
+//             position={[
+//                 country.position.x * 1.2,
+//                 country.position.y * 1.2,
+//                 country.position.z * 1.2
+//             ]}
+//             style={{
+//                 pointerEvents: 'none',
+//                 transform: 'translate3d(-50%, -50%, 0)'
+//             }}
+//         >
+//             <div className="country-tooltip">
+//                 <h3>{country.name}</h3>
+//                 {country.is_major && <span className="major-badge">Major Country</span>}
+//                 <div className="coordinates">
+//                     <div>Lat: {country.lat.toFixed(2)}°</div>
+//                     <div>Lon: {country.lon.toFixed(2)}°</div>
+//                 </div>
+//             </div>
+//         </Html>
+//     );
+// }
 
 export default EarthScene;

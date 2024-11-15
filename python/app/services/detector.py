@@ -86,12 +86,43 @@ class CountryDetector:
             print(f"Unexpected error: {e}")
             raise
 
+    def get_major_countries(self) -> dict:
+        """Export GeoJSON for major countries"""
+        try:
+            major_borders = self.world[self.world['SOVEREIGNT'].isin(
+                self.major_countries.keys())]
+            return json.loads(major_borders.to_json())
+        except Exception as e:
+            print(f"Error getting major countries: {e}")
+            return {}
+
+
     def cartesian_to_spherical(self, x: float, y: float, z: float) -> tuple:
-        """Convert 3D cartesian coordinates to spherical (lat/lon)"""
+        """Convert 3D cartesian coordinates to spherical (lat/lon)
+        In Three.js:
+        - X is left/right (-/+)
+        - Y is up/down (+/-)
+        - Z is front/back (-/+)
+        
+        We need to map this to:
+        - Latitude: -90 (south) to +90 (north)
+        - Longitude: -180 (west) to +180 (east)
+        """
         radius = np.sqrt(x**2 + y**2 + z**2)
-        lat = np.arcsin(z/radius) * 180/np.pi
-        lon = np.arctan2(y, x) * 180/np.pi
+
+        # Convert coordinates
+        # Latitude is determined by Y coordinate (up/down)
+        lat = np.arcsin(y/radius) * 180/np.pi
+
+        # Longitude is determined by X and Z
+        # arctan2(z, -x) gives us the correct orientation
+        lon = np.arctan2(z, -x) * 180/np.pi
+
+        # Normalize longitude to [-180, 180]
+        lon = ((lon + 180) % 360) - 180
+
         return lat, lon
+
 
     def determine_country(self, x: float, y: float, z: float) -> dict:
         """
@@ -102,10 +133,14 @@ class CountryDetector:
             lat, lon = self.cartesian_to_spherical(x, y, z)
             point = Point(lon, lat)
 
+            # Print for debugging
+            print(f"Coordinates - x: {x:.2f}, y: {y:.2f}, z: {z:.2f}")
+            print(f"Converted - lat: {lat:.2f}, lon: {lon:.2f}")
+
             # Find which country contains this point
             for idx, country in self.world.iterrows():
                 if country.geometry.contains(point):
-                    name = country['SOVEREIGNT']  # Updated column name
+                    name = country['ADMIN']
                     is_major = name in self.major_countries
                     code = self.major_countries.get(name, country['ADM0_A3'])
                     return {
@@ -127,13 +162,3 @@ class CountryDetector:
         except Exception as e:
             print(f"Error determining country: {e}")
             return None
-
-    def get_major_countries(self) -> dict:
-        """Export GeoJSON for major countries"""
-        try:
-            major_borders = self.world[self.world['SOVEREIGNT'].isin(
-                self.major_countries.keys())]
-            return json.loads(major_borders.to_json())
-        except Exception as e:
-            print(f"Error getting major countries: {e}")
-            return {}

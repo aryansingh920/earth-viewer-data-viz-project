@@ -1,40 +1,182 @@
+/* Container styles */
 .App {
   width: 100vw;
   height: 100vh;
-    overflow: hidden;
-    background: #000000;
+  background: black;
+    position: relative;
 }
 
-canvas {
-  touch-action: none;
-}
-
+/* Loading indicator */
 .loading {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 1.5rem;
-  font-family: Arial, sans-serif;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  font-size: 1.2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   
-  /* Optional: Add a loading animation */
-  @keyframes pulse {
-    0% {
-      opacity: 0.5;
-    }
+  /* Earth container */
+  .earth-container {
+    width: 100%;
+    height: 100%;
+  }
   
-    50% {
+  /* Canvas style */
+  canvas {
+    touch-action: none;
+  }
+  
+  /* Tooltip styles */
+  .earth-tooltip {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
+      0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-width: 120px;
+    pointer-events: none;
+    transform-origin: center center;
+  }
+  
+  .earth-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(0, 0, 0, 0.75);
+  }
+  
+  .earth-tooltip .country-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  
+  .earth-tooltip .coordinates {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  
+  .earth-tooltip .coordinates span {
+    white-space: nowrap;
+  }
+/* Animation for tooltip appearance */
+@keyframes tooltipAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(5px);
+  }
+    to {
       opacity: 1;
+    transform: scale(1) translateY(0);
     }
-  
-    100% {
-      opacity: 0.5;
     }
+    
+    .earth-tooltip {
+      animation: tooltipAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Earth interaction styles */
+    .earth-mesh {
+      cursor: crosshair;
+    }
+    
+    /* Star background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .earth-tooltip {
+    font-size: 12px;
+    padding: 6px 10px;
+    min-width: 100px;
   }
-  
-  .loading {
-    animation: pulse 1.5s infinite ease-in-out;
+
+  .earth-tooltip .country-name {
+    font-size: 12px;
+  }
+
+  .earth-tooltip .coordinates {
+    font-size: 10px;
+    gap: 6px;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .earth-tooltip {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+  }
+
+  .earth-tooltip .coordinates {
+    color: rgba(255, 255, 255, 1);
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .earth-tooltip {
+    animation: none;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .earth-mesh {
+    cursor: default;
+  }
+}
+/* Dark mode optimization */
+@media (prefers-color-scheme: dark) {
+  .earth-tooltip {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(0, 0, 0, 0.2);
+  }
 }
