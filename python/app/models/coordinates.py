@@ -1,3 +1,4 @@
+# models/coordinates.py
 from pydantic import BaseModel
 
 

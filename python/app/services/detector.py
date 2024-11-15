@@ -1,3 +1,4 @@
+# services/detector.py
 import geopandas as gpd
 import numpy as np
 from shapely.geometry import Point
