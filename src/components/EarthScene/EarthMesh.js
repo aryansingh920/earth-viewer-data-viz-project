@@ -42,11 +42,11 @@ const EarthMesh = forwardRef(({ isNightMode, onPointerMove, hoverCountry }, ref)
 
             {/* Cloud Layer */}
             <mesh ref={cloudRef}>
-                <sphereGeometry args={[1.009, 64, 64]} /> {/* Slightly larger than Earth */}
+                <sphereGeometry args={[1.007, 64, 64]} /> {/* Slightly larger than Earth */}
                 <meshStandardMaterial
                     map={cloudTexture}
                     transparent={true}
-                    opacity={0.2} // Cloud intensity
+                    opacity={isNightMode ? 0.2 : 0.4} // Cloud intensity
                     depthWrite={false} // Prevent z-fighting with the Earth mesh
                 />
             </mesh>

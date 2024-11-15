@@ -7,9 +7,9 @@ import './App.css';
 function App() {
   const [showGuide, setShowGuide] = useState(true);
 
-  // const closeGuide = () => {
-  //   setShowGuide(false);
-  // };
+  const closeGuide = () => {
+    setShowGuide(false);
+  };
 
   useEffect(() => { }, [showGuide]);
 
@@ -25,9 +25,9 @@ function App() {
               <li>Rotate the Earth by clicking and dragging.</li>
               <li>Hover over countries to see their names.</li>
             </ul>
-            {/* <button className="close-button" onClick={closeGuide}>
+            <button className="close-button" onClick={closeGuide}>
               ✖ Close
-            </button> */}
+            </button>
           </div>
         </div>
       )}
