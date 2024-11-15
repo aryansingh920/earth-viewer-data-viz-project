@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+geopandas
+numpy
+shapely
+pydantic

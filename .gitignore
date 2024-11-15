@@ -23,3 +23,9 @@ yarn-debug.log*
 yarn-error.log*
 
 node_modules
+
+python/data_viz_env
+
+__pycache__/
+
+.venv
