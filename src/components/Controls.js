@@ -6,8 +6,8 @@ function Controls() {
         <OrbitControls
             enableDamping
             dampingFactor={0.05}
-            minDistance={2}
-            maxDistance={10}
+            minDistance={0}
+            maxDistance={3}
             enablePan={true}
             enableZoom={true}
             enableRotate={true}

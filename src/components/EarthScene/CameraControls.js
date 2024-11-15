@@ -7,10 +7,10 @@ function CameraControls() {
             enableZoom={true}
             enablePan={true}
             enableRotate={true}
-            zoomSpeed={0.6}
-            panSpeed={0.5}
-            rotateSpeed={0.4}
-            minDistance={1.5}  // Minimum zoom distance (closer to Earth)
+            zoomSpeed={0.0001}
+            panSpeed={0.003}
+            rotateSpeed={0.05}
+            minDistance={1.9}  // Minimum zoom distance (closer to Earth)
             maxDistance={10}   // Maximum zoom distance
             // For smoother camera movement
             enableDamping={true}
