@@ -15,11 +15,58 @@ function EarthScene() {
     const [hoverCountry, setHoverCountry] = useState(null);
     // eslint-disable-next-line no-unused-vars
     const [majorCountries, setMajorCountries] = useState(null);
+    const [isNightMode, setIsNightMode] = useState(false);
     const { camera } = useThree();
+    const [isAnimating, setIsAnimating] = useState(false);
+    // const [isNightMode, setIsNightMode] = useState(false);
+
+    // Create a subtle blue night light color
+    const nightLightColor = new THREE.Color(0x3366ff);
+    const handleModeToggle = () => {
+        setIsAnimating(true);
+        setIsNightMode(!isNightMode);
+        setTimeout(() => setIsAnimating(false), 300);
+    };
+
+
 
     // Load textures
-    const earthTexture = useLoader(TextureLoader, '/textures/8k_earth_daymap.jpg');
+    // Load both textures
+    const [dayTexture, nightTexture] = useLoader(TextureLoader, [
+        '/textures/8k_earth_daymap.jpg',
+        '/textures/8k_earth_nightmap.jpg'
+    ]);
 
+    // Create outline material for country highlighting
+    const outlineMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            color: { value: new THREE.Color(0x00ff00) },
+            glowIntensity: { value: 1.0 }
+        },
+        vertexShader: `
+            varying vec3 vNormal;
+            void main() {
+                vNormal = normalize(normalMatrix * normal);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform vec3 color;
+            uniform float glowIntensity;
+            varying vec3 vNormal;
+            void main() {
+                float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 4.0);
+                gl_FragColor = vec4(color, intensity * glowIntensity);
+            }
+        `,
+        transparent: true,
+        side: THREE.BackSide
+    });
+
+    // Handle mode toggle
+    const toggleNightMode = () => {
+        setIsNightMode(!isNightMode);
+    };
     // Fetch major countries data
     useEffect(() => {
         const fetchMajorCountries = async () => {
@@ -108,33 +155,106 @@ function EarthScene() {
 
     return (
         <>
-            <ambientLight intensity={0.6} />
-            <directionalLight position={[5, 3, 5]} intensity={1} color={0xffffff} />
-            <directionalLight position={[-5, -3, -5]} intensity={0.8} color={0xffffff} />
-            <pointLight position={[0, 10, 0]} intensity={0.5} color={0xffffff} />
-            <pointLight position={[0, -10, 0]} intensity={0.5} color={0xffffff} />
-            <pointLight position={[10, 0, 0]} intensity={0.3} color={0xccccff} />
-            <pointLight position={[-10, 0, 0]} intensity={0.3} color={0xccccff} />
+            <ambientLight
+                intensity={isNightMode ? 0.3 : 0.6}
+                color={isNightMode ? nightLightColor : 0xffffff}
+            />
 
-            <mesh
-                ref={earthRef}
-                onPointerMove={handlePointerMove}
-                className="earth-mesh"
-            >
-                <sphereGeometry args={[1, 64, 64]} />
-                <meshStandardMaterial
-                    map={earthTexture}
-                    metalness={0.1}
-                    roughness={0.8}
-                />
-            </mesh>
+            {/* Main directional light (sun/moon) */}
+            <directionalLight
+                position={[5, 3, 5]}
+                intensity={isNightMode ? 0.4 : 1}
+                color={isNightMode ? 0x4466ff : 0xffffff}
+            />
+
+            {/* Additional rim lighting for night mode */}
+            {isNightMode && (
+                <>
+                    {/* Soft blue moonlight from above */}
+                    <pointLight
+                        position={[0, 10, 0]}
+                        intensity={0.3}
+                        color={0x3366ff}
+                        distance={20}
+                    />
+
+                    {/* Atmospheric scatter light */}
+                    <hemisphereLight
+                        skyColor={0x3366ff}
+                        groundColor={0x000066}
+                        intensity={1}
+                    />
+
+                    {/* Subtle edge highlights */}
+                    <pointLight
+                        position={[-10, 0, 0]}
+                        intensity={0.2}
+                        color={0x3366ff}
+                        distance={15}
+                    />
+                    <pointLight
+                        position={[10, 0, 0]}
+                        intensity={0.2}
+                        color={0x3366ff}
+                        distance={15}
+                    />
+                </>
+            )}
+
+
+            {/* Earth mesh */}
+            <group>
+                {/* Main Earth sphere */}
+                <mesh ref={earthRef} onPointerMove={handlePointerMove}>
+                    <sphereGeometry args={[1, 64, 64]} />
+                    <meshStandardMaterial
+                        map={isNightMode ? nightTexture : dayTexture}
+                        metalness={0.1}
+                        roughness={0.8}
+                    />
+                </mesh>
+
+                {/* Glow effect for highlighted country */}
+                {hoverCountry && (
+                    <mesh>
+                        <sphereGeometry args={[1.01, 64, 64]} />
+                        <shaderMaterial {...outlineMaterial} />
+                    </mesh>
+                )}
+            </group>
+
+            {/* Day/Night toggle button */}
+            <Html fullscreen>
+                <div className="earth-controls">
+                    <div className="mode-button">
+                        <button
+                            onClick={() => setIsNightMode(!isNightMode)}
+                            className="control-button"
+                        >
+                            <div className="button-content">
+                                {isNightMode ? (
+                                    <>
+                                        <span className="mode-icon">☀️</span>
+                                        <span className="mode-text">Day View</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="mode-icon">🌙</span>
+                                        <span className="mode-text">Night View</span>
+                                    </>
+                                )}
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </Html>
 
             {hoverCountry && <CountryTooltip country={hoverCountry} />}
-
             <Stars />
         </>
     );
 }
+
 
 // Separate component for the tooltip
 // function CountryTooltip({ country }) {
