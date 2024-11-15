@@ -1,10 +1,26 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import React, { useRef, useMemo, useEffect } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 function Stars({ count = 5000 }) {
     const points = useRef();
+    const { scene } = useThree(); // Access the scene to add a background texture
+
+    // Load the background texture
+    useEffect(() => {
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            '/textures/stars.png', // Replace with your image path
+            (texture) => {
+                scene.background = texture; // Set the background texture
+            },
+            undefined,
+            (error) => {
+                console.error('An error occurred while loading the background:', error);
+            }
+        );
+    }, [scene]);
 
     const particlesPosition = useMemo(() => {
         const positions = new Float32Array(count * 3);
