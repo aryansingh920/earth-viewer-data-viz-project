@@ -1,23 +1,19 @@
-import logo from './logo.svg';
+import React from 'react';
+import { Canvas } from '@react-three/fiber';
+import EarthScene from './components/EarthScene';
+import Controls from './components/Controls';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" style={{ width: '100vw', height: '100vh' }}>
+      <Canvas
+        camera={{ position: [0, 0, 3], fov: 75 }}
+        style={{ background: '#000000' }}
+      >
+        <EarthScene />
+        <Controls />
+      </Canvas>
     </div>
   );
 }
