@@ -3,6 +3,7 @@ import { Html } from '@react-three/drei';
 import EarthMesh from './EarthMesh';
 import Lighting from './Lighting';
 import Controls from './Controls';
+import CameraControls from './CameraControls';
 import Stars from '../Stars';
 import CountryTooltip from '../CountryTooltip';
 import { useEarthInteraction } from './hooks/useEarthInteraction';
@@ -25,6 +26,7 @@ function EarthScene() {
 
     return (
         <>
+            <CameraControls />
             <Lighting isNightMode={isNightMode} />
 
             <EarthMesh
