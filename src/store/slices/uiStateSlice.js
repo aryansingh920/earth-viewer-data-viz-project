@@ -1,15 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-    showGuide: true,
-    showControls: true,
-    showTooltip: true,
-    isAnimating: false,
-};
-
 const uiStateSlice = createSlice({
     name: 'uiState',
-    initialState,
+    initialState: {
+        showGuide: true,
+        showControls: true,
+        showTooltip: true,
+        isAnimating: false,
+    },
     reducers: {
         closeGuide: (state) => {
             state.showGuide = false;

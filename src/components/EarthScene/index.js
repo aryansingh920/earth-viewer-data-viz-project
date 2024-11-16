@@ -1,5 +1,6 @@
 import React from 'react';
 import { Html } from '@react-three/drei';
+import { useSelector, useDispatch } from 'react-redux';
 import EarthMesh from './EarthMesh';
 import Lighting from './Lighting';
 import Controls from './Controls';
@@ -8,6 +9,8 @@ import Stars from '../Stars';
 import CountryTooltip from '../CountryTooltip';
 import { useEarthInteraction } from './hooks/useEarthInteraction';
 import { useEarthRotation } from './hooks/useEarthRotation';
+import { setHoveredCountry } from '../../store/slices/countryDataSlice';
+import { toggleNightMode, setRotationSpeed } from '../../store/slices/earthControlsSlice';
 
 function EarthScene() {
     const {
@@ -18,11 +21,25 @@ function EarthScene() {
 
     const {
         isNightMode,
-        setIsNightMode,
         isAnimating,
         isRotating,
         handleModeToggle
     } = useEarthRotation(earthRef);
+
+    const dispatch = useDispatch();
+
+    // Sync local state with Redux when it changes
+    React.useEffect(() => {
+        if (hoverCountry)
+        {
+            dispatch(setHoveredCountry(hoverCountry));
+        }
+    }, [hoverCountry, dispatch]);
+
+    const handleToggle = () => {
+        handleModeToggle();
+        dispatch(toggleNightMode());
+    };
 
     return (
         <>
@@ -40,7 +57,7 @@ function EarthScene() {
             <Html fullscreen>
                 <Controls
                     isNightMode={isNightMode}
-                    onToggle={handleModeToggle}
+                    onToggle={handleToggle}
                     isAnimating={isAnimating}
                 />
             </Html>

@@ -1,16 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-    isNightMode: false,
-    isRotating: true,
-    isHoverEnabled: true,
-    rotationSpeed: 0.001,
-    zoomLevel: 1,
-};
-
 const earthControlsSlice = createSlice({
     name: 'earthControls',
-    initialState,
+    initialState: {
+        isNightMode: false,
+        isRotating: true,
+        isHoverEnabled: true,
+        rotationSpeed: 0.001,
+        zoomLevel: 1,
+    },
     reducers: {
         toggleNightMode: (state) => {
             state.isNightMode = !state.isNightMode;

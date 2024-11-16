@@ -9,16 +9,14 @@ export const fetchCountryData = createAsyncThunk(
     }
 );
 
-const initialState = {
-    hoveredCountry: null,
-    countryDetails: {},
-    loading: false,
-    error: null,
-};
-
 const countryDataSlice = createSlice({
     name: 'countryData',
-    initialState,
+    initialState: {
+        hoveredCountry: null,
+        countryDetails: {},
+        loading: false,
+        error: null,
+    },
     reducers: {
         setHoveredCountry: (state, action) => {
             state.hoveredCountry = action.payload;
