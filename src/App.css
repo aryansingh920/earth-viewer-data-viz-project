@@ -9,6 +9,10 @@ html {
     position: relative;
 }
 
+body {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
 /* Loading indicator */
 .loading {
   position: fixed;
@@ -540,6 +544,7 @@ html {
 .generate-button {
   width: 100%;
   padding: 10px;
+  margin-bottom: 10px;
   background: rgba(245, 158, 11, 0.2);
   border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 4px;
@@ -597,21 +602,24 @@ html {
 }
 
 .reset-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 4px;
-  padding: 6px;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 4px;
+    color: white;
+    display: flex;
+      align-items: center;
+      justify-content: center;
+    gap: 8px;
+      cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .reset-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(180deg);
+    background: rgba(245, 158, 11, 0.3);
+      /* transform: rotate(180deg); */
 }
 
 .graphs-section {

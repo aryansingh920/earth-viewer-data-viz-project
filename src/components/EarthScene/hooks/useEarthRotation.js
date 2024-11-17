@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 
-export function useEarthRotation(earthRef) {
+export function useEarthRotation(earthRef, leftSidebarOpen, rightSidebarOpen) {
     const [isNightMode, setIsNightMode] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
-    const [isRotating, setIsRotating] = useState(true);
+    const [isRotating, setIsRotating] = useState(false);
 
-    // Handle rotation controls
+    // Handle user interaction disabling rotation
     useEffect(() => {
         const handlePointerDown = () => setIsRotating(false);
-        const handlePointerUp = () => setIsRotating(true);
+        const handlePointerUp = () => {
+            if (!leftSidebarOpen && !rightSidebarOpen) setIsRotating(true);
+        };
 
         window.addEventListener('pointerdown', handlePointerDown);
         window.addEventListener('pointerup', handlePointerUp);
@@ -20,7 +21,7 @@ export function useEarthRotation(earthRef) {
             window.removeEventListener('pointerup', handlePointerUp);
             window.removeEventListener('pointerleave', handlePointerUp);
         };
-    }, []);
+    }, [leftSidebarOpen, rightSidebarOpen]);
 
     // Initial rotation setup
     useEffect(() => {
@@ -32,26 +33,24 @@ export function useEarthRotation(earthRef) {
         }
     }, [earthRef]);
 
-    // Continuous rotation
-    // useFrame(() => {
-    //     if (earthRef.current && isRotating)
-    //     {
-    //         earthRef.current.rotation.y += 0.001;
-    //     }
-    // });
+    // Continuous rotation based on conditions
+    useFrame(() => {
+        if (earthRef.current && isRotating && !leftSidebarOpen && !rightSidebarOpen)
+        {
+            earthRef.current.rotation.y += 0.001;
+        }
+    });
 
     // Handle mode toggle with animation
     const handleModeToggle = () => {
-        setIsAnimating(true);
         setIsNightMode(prev => !prev);
-        setTimeout(() => setIsAnimating(false), 300);
     };
 
     return {
         isNightMode,
         setIsNightMode,
-        isAnimating,
         isRotating,
+        setIsRotating,
         handleModeToggle
     };
 }

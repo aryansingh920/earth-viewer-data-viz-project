@@ -7,9 +7,9 @@ function RightSidebar({
     country,
     country1,
     country2,
+    isLoading,
     onGenerateComparison,
-    onResetComparison,
-    isLoading
+    onResetComparison
 }) {
     const formatValue = (value) => {
         if (typeof value === 'number')
@@ -41,21 +41,9 @@ function RightSidebar({
                     </div>
                 )}
 
-                <div className="comparison-section">
-                    <div className="comparison-header">
-                        <h4>Country Comparison</h4>
-                        {(country1 || country2) && (
-                            <button
-                                className="reset-button"
-                                onClick={onResetComparison}
-                                title="Reset selection"
-                            >
-                                <RotateCcw size={14} />
-                            </button>
-                        )}
-                    </div>
-
-                    <div className="comparison-boxes">
+                <div className="comparison-controls">
+                    <h4>Compare Countries</h4>
+                    <div className="country-boxes">
                         <div className={`country-box ${country1 ? 'selected' : ''}`}>
                             {country1 ? country1.name : 'Press Enter to select Country 1'}
                         </div>
@@ -64,14 +52,26 @@ function RightSidebar({
                         </div>
                     </div>
 
-                    <button
-                        className="generate-button"
-                        onClick={onGenerateComparison}
-                        disabled={!country1 || !country2 || isLoading}
-                    >
-                        <ChartBar size={16} />
-                        {isLoading ? 'Generating...' : 'Generate Comparison'}
-                    </button>
+                    <div className="action-buttons">
+                        <button
+                            className="generate-button"
+                            onClick={onGenerateComparison}
+                            disabled={!country1 || !country2 || isLoading}
+                        >
+                            <ChartBar size={16} />
+                            {isLoading ? 'Generating...' : 'Generate Comparison'}
+                        </button>
+
+                        {(country1 || country2) && (
+                            <button
+                                className="reset-button"
+                                onClick={onResetComparison}
+                            >
+                                <RotateCcw size={16} />
+                                Reset Selection
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

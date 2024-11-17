@@ -1,25 +1,24 @@
 import React from 'react';
-import { Sun, Moon, RotateCcw } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 
 function LeftSidebar({
     isOpen,
     onToggle,
     isNightMode,
     onNightModeToggle,
-    comparisonGraphs,
-    isLoading
+    comparisonGraphs
 }) {
     return (
         <div className={`sidebar left ${isOpen ? 'open' : ''}`}>
             <div className="sidebar-toggle" onClick={onToggle} />
             <div className="sidebar-content">
                 <div className="sidebar-header">
-                    <h3>Controls & Visualizations</h3>
+                    <h3>Visualization</h3>
                 </div>
 
-                <div className="controls-section">
+                <div className="mode-control">
                     <button
-                        className={`control-button ${isNightMode ? 'night' : 'day'}`}
+                        className={`mode-toggle-button ${isNightMode ? 'night' : 'day'}`}
                         onClick={onNightModeToggle}
                     >
                         {isNightMode ? (
@@ -38,7 +37,7 @@ function LeftSidebar({
 
                 {comparisonGraphs && (
                     <div className="graphs-section">
-                        <h4>Comparison Charts</h4>
+                        <h4>Comparison Analysis</h4>
                         <div className="graphs-container">
                             {Object.entries(comparisonGraphs).map(([title, base64Image]) => (
                                 <div key={title} className="graph-container">
@@ -50,13 +49,6 @@ function LeftSidebar({
                                 </div>
                             ))}
                         </div>
-                    </div>
-                )}
-
-                {isLoading && (
-                    <div className="loading-overlay">
-                        <div className="loading-spinner" />
-                        <p>Generating comparisons...</p>
                     </div>
                 )}
             </div>
