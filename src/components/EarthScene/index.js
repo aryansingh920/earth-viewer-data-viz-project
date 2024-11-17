@@ -9,6 +9,8 @@ import Sidebar from '../Sidebar';
 import { Sun, Moon, Info } from 'lucide-react';
 import { useEarthInteraction } from './hooks/useEarthInteraction';
 import { useEarthRotation } from './hooks/useEarthRotation';
+import { useCountryComparison } from './hooks/useCountryComparison';
+import CountryInfoSidebar from './CountryInfoSidebar';
 
 function EarthScene() {
     const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
@@ -21,12 +23,23 @@ function EarthScene() {
     } = useEarthInteraction();
 
     const {
+        country1,
+        country2,
+        comparisonGraphs,
+        isLoading,
+        generateComparison,
+        resetComparison
+    } = useCountryComparison(hoverCountry);
+
+    const {
         isNightMode,
         setIsNightMode,
         isAnimating,
         isRotating,
         handleModeToggle
     } = useEarthRotation(earthRef);
+
+
 
     return (
         <>
@@ -79,33 +92,17 @@ function EarthScene() {
                 </Sidebar>
 
                 {/* Right Sidebar - Country Info */}
-                <Sidebar
-                    position="right"
+                <CountryInfoSidebar
+                    country={hoverCountry}
                     isOpen={rightSidebarOpen}
                     onToggle={() => setRightSidebarOpen(!rightSidebarOpen)}
-                    title="Country Information"
-                >
-                    {hoverCountry ? (
-                        <div className="stats-section">
-                            <h4>{hoverCountry.name}</h4>
-                            {hoverCountry.data && Object.entries(hoverCountry.data).map(([key, value]) => (
-                                <div key={key} className="stat-item">
-                                    <div className="stat-label">{key}</div>
-                                    <div className="stat-value">
-                                        {typeof value === 'number' ?
-                                            new Intl.NumberFormat().format(value) :
-                                            value}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="no-country-selected">
-                            <Info size={24} />
-                            <p>Hover over a country to see its information</p>
-                        </div>
-                    )}
-                </Sidebar>
+                    country1={country1}
+                    country2={country2}
+                    comparisonGraphs={comparisonGraphs}
+                    isLoading={isLoading}
+                    onGenerateComparison={generateComparison}
+                    onResetComparison={resetComparison}
+                />
             </Html>
 
             <Stars />
