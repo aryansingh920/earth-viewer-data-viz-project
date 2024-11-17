@@ -1,4 +1,7 @@
 from fastapi import APIRouter, HTTPException
+from app.models.CountryCompare import CountryCompare
+
+
 from ..models.coordinates import Coordinates
 from ..services.detector import CountryDetector
 from ..services.data_service import CountryDataService
@@ -38,5 +41,17 @@ async def get_country_data(country_name: str) -> Dict[str, Any]:
             raise HTTPException(
                 status_code=404, detail="Country not found or no data available")
         return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/compare-countries")
+async def compare_countries(request: CountryCompare):
+    try:
+        graphs = data_service.generate_comparison_graphs(
+            request.country1, request.country2)
+        return {"graphs": graphs}
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

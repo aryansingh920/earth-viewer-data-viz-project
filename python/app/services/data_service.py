@@ -1,7 +1,9 @@
 import pandas as pd
 from typing import Dict, Any
 import os
-
+import matplotlib.pyplot as plt
+import io
+import base64
 
 class CountryDataService:
     def __init__(self):
@@ -104,3 +106,112 @@ class CountryDataService:
         except Exception as e:
             print(f"Error getting country data: {e}")
             return {}
+
+    def generate_comparison_graphs(self, country1: str, country2: str) -> Dict[str, str]:
+        country1_data = self.get_country_data(country1)
+        country2_data = self.get_country_data(country2)
+
+        if not country1_data or not country2_data:
+            raise ValueError("Data for one or both countries not available.")
+
+        graph_images = {}
+
+        def save_graph_to_base64():
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format="png", facecolor='black')
+            buffer.seek(0)
+            graph_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+            buffer.close()
+            plt.close()
+            return graph_base64
+
+        def set_dark_theme():
+            plt.rcParams.update({
+                "figure.facecolor": "black",
+                "axes.facecolor": "black",
+                "axes.edgecolor": "white",
+                "axes.labelcolor": "white",
+                "xtick.color": "white",
+                "ytick.color": "white",
+                "text.color": "white",
+                "legend.facecolor": "black",
+                "legend.edgecolor": "white"
+            })
+
+        set_dark_theme()
+
+        # Bar Chart: GDP
+        if "GDP (USD)" in country1_data and "GDP (USD)" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.bar([country1, country2],
+                    [country1_data["GDP (USD)"], country2_data["GDP (USD)"]])
+            plt.title("GDP Comparison", color='white')
+            plt.xlabel("Country", color='white')
+            plt.ylabel("GDP (USD)", color='white')
+            graph_images["GDP Comparison"] = save_graph_to_base64()
+
+        # Bar Chart: GDP per Capita
+        if "GDP per Capita (USD)" in country1_data and "GDP per Capita (USD)" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.bar([country1, country2],
+                    [country1_data["GDP per Capita (USD)"], country2_data["GDP per Capita (USD)"]], color=['blue', 'orange'])
+            plt.title("GDP per Capita Comparison", color='white')
+            plt.xlabel("Country", color='white')
+            plt.ylabel("GDP per Capita (USD)", color='white')
+            graph_images["GDP per Capita Comparison"] = save_graph_to_base64()
+
+        # Bar Chart: Population
+        if "Population" in country1_data and "Population" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.bar([country1, country2],
+                    [country1_data["Population"], country2_data["Population"]], color=['green', 'purple'])
+            plt.title("Population Comparison", color='white')
+            plt.xlabel("Country", color='white')
+            plt.ylabel("Population", color='white')
+            graph_images["Population Comparison"] = save_graph_to_base64()
+
+        # Pie Chart: Population Share
+        if "World Population Share (%)" in country1_data and "World Population Share (%)" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.pie(
+                [country1_data["World Population Share (%)"],
+                 country2_data["World Population Share (%)"]],
+                labels=[country1, country2],
+                autopct="%1.1f%%", textprops={'color': "white"}
+            )
+            plt.title("World Population Share", color='white')
+            graph_images["World Population Share"] = save_graph_to_base64()
+
+        # Bar Chart: Fertility Rate
+        if "Fertility Rate" in country1_data and "Fertility Rate" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.bar([country1, country2],
+                    [country1_data["Fertility Rate"], country2_data["Fertility Rate"]], color=['red', 'cyan'])
+            plt.title("Fertility Rate Comparison", color='white')
+            plt.xlabel("Country", color='white')
+            plt.ylabel("Fertility Rate", color='white')
+            graph_images["Fertility Rate Comparison"] = save_graph_to_base64()
+
+        # Pie Chart: Gender Inequality Index
+        if "Gender Inequality Index" in country1_data and "Gender Inequality Index" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.pie(
+                [country1_data["Gender Inequality Index"],
+                    country2_data["Gender Inequality Index"]],
+                labels=[country1, country2],
+                autopct="%1.1f%%", textprops={'color': "white"}
+            )
+            plt.title("Gender Inequality Comparison", color='white')
+            graph_images["Gender Inequality Comparison"] = save_graph_to_base64()
+
+        # Bar Chart: Life Expectancy
+        if "Life Expectancy" in country1_data and "Life Expectancy" in country2_data:
+            plt.figure(figsize=(8, 6))
+            plt.bar([country1, country2],
+                    [country1_data["Life Expectancy"], country2_data["Life Expectancy"]], color=['pink', 'gray'])
+            plt.title("Life Expectancy Comparison", color='white')
+            plt.xlabel("Country", color='white')
+            plt.ylabel("Life Expectancy (Years)", color='white')
+            graph_images["Life Expectancy Comparison"] = save_graph_to_base64()
+
+        return graph_images

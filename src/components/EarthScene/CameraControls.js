@@ -10,8 +10,8 @@ function CameraControls() {
             zoomSpeed={0.1}
             panSpeed={0.3}
             rotateSpeed={0.5}
-            minDistance={1.7}  // Minimum zoom distance (closer to Earth)
-            maxDistance={10}   // Maximum zoom distance
+            minDistance={1.6}  // Minimum zoom distance (closer to Earth)
+            maxDistance={2}   // Maximum zoom distance
             // For smoother camera movement
             enableDamping={true}
             dampingFactor={0.05}

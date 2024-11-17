@@ -4,3 +4,4 @@ geopandas
 numpy
 shapely
 pydantic
+matplotlib
