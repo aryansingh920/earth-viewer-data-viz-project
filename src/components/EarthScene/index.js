@@ -199,6 +199,7 @@ function EarthScene() {
                                     Reset Selection
                                 </button>
                             )}
+                            Made by <a href="https://aryan-singh20-portfolio.netlify.app/">Aryan Singh</a>
                         </div>
                     </div>
                 </Sidebar>
