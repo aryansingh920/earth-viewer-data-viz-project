@@ -1,70 +1,43 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Introduction
+1.	Motivation for the Project:
+o	Discuss why a 3D visualization of Earth is an excellent choice for showcasing complex data in a visually engaging way.
+o	Highlight how the project aligns with the assignment objectives, such as combining multiple idioms (3D visualization and interactive graphs) and supporting interactive data exploration.
+o	State how this visualization provides intuitive insights into global datasets (e.g., economic indicators, population metrics) in a way that is not achievable with traditional static charts.
+2.	Objective:
+o	Create a dynamic, interactive visualization that combines geographic and statistical data, enabling users to explore and compare key metrics across countries.
+o	Facilitate understanding of multidimensional datasets through innovative visualization methods.
+3.	Overview of Features:
+o	A rotatable, zoomable, textured 3D Earth model with multiple layers (day, night, clouds, heat maps).
+o	Interactive exploration with hover-based data retrieval and comparative analysis between countries.
+o	Dynamic graph generation for visual comparison of selected countries' metrics.
+ 
+Description
+1.	Dataset and Complexity:
+o	Data Source: Mention the sources of the data, such as Kaggle for the metrics (e.g., GDP, population) and NASA for Earth texture maps.
+o	Complexity: Explain the dataset's multivariate nature, covering economic, social, and demographic dimensions. Emphasize how visualizing these relationships requires moving beyond standard charts.
+2.	Technical Implementation:
+o	3D Earth Visualization:
+	Tools: Built using Three.js and Fibre for rendering the 3D Earth.
+	Features: Realistic textures (day, night, and clouds) and seamless interaction (rotation and zoom).
+	Technical Detail: Use of shapely and geo-pandas to calculate hover interactions based on latitude and longitude, enabling country-specific data retrieval.
+o	Data Analysis and Graphs:
+	Backend: Fast API server for processing and rendering graphs using matplotlib.
+	Process: Upon selecting two countries, their data is sent to the backend, processed, and displayed as comparison graphs (e.g., GDP, GDP per capita, fertility rate).
+3.	Interactive Features:
+o	Real-time user interactions, such as hovering over countries to see data and selecting countries to generate comparative graphs.
+o	Sidebar for data display and graph thumbnail previews, with the ability to enlarge graphs for detailed views.
+4.	Visualization Details:
+o	Encoding Channels: Geographic position (latitude and longitude) mapped to spatial positions on the 3D sphere, with colour and texture changes for night mode, heat maps, and clouds.
+o	Interactivity: Dynamic graph updates and Earth manipulations to explore data in a user-friendly manner.
+5.	Novelty and Innovation:
+o	The combination of 3D geographic data with interactive, dynamic statistical graphs in one unified interface.
+o	Unique rendering of country-specific overlays and real-time data visual exploration on a rotating Earth model.
+ 
+References
+1.	Video Presentation Link : https://www.youtube.com/watch?v=7_NrSDwLk_M&t=86s 
+2.	Geo Pandas Documentation : https://geopandas.org/en/stable/ 
+3.	Three.js Documentation : https://threejs.org 
+4.	Texture Map : https://nasa3d.arc.nasa.gov/images 
+5.	GitHub: https://github.com/aryansingh920/earth-viewer-data-viz-project  
+6.	Kaggle Data sets : https://www.kaggle.com/datasets/nishanthsalian/socioeconomic-country-profiles, https://www.kaggle.com/datasets/iamsouravbanerjee/world-population-dataset 
